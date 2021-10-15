@@ -54,7 +54,7 @@
     }
   },
   "optimizer": {
-    "type": "AdamW",
+    "type": "SGD",
     "args": {
       "lr": 3e-4
     }
@@ -81,14 +81,14 @@
     "type": "OneCycleLR",
       "args": {
       "steps_per_epoch": 100,
-      "epochs": 1000,
+      "epochs": 100,
       "anneal_strategy": "cos",
-      "max_lr": 4e-3,
+      "max_lr": 1e-1,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 1000,
+    "epochs": 100,
     "save_dir": "saved/",
     "save_period": 10,
     "verbosity": 2,
@@ -96,6 +96,7 @@
     "early_stop": 100,
     "visualize": "wandb",
     "wandb_project": "dla_hw1_1_lstm",
+    "len_epoch": 25,
     "grad_norm_clip": 10
   }
 }

@@ -1,6 +1,7 @@
 from torch import nn, zeros
-
+import torch
 from hw_asr.base import BaseModel
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 
 class LstmModel(BaseModel):
@@ -10,18 +11,21 @@ class LstmModel(BaseModel):
         self.layer_dim = layer_dim
         self.fc_hidden = fc_hidden
 
-        self.lstm = nn.LSTM(n_feats, fc_hidden, layer_dim)
-        self.fc = nn.Linear(fc_hidden, n_class)
+        self.lstm = nn.LSTM(n_feats, fc_hidden, layer_dim, bidirectional=True, batch_first=True)
+        self.fc = nn.Linear(fc_hidden * 2, n_class)
 
     def forward(self, spectrogram, *args, **kwargs):
-        # print(spectrogram.shape)
-        h0 = zeros(self.layer_dim, spectrogram.shape[1], self.fc_hidden).requires_grad_()
-        c0 = zeros(self.layer_dim, spectrogram.shape[1], self.fc_hidden).requires_grad_()
+        print('a')
+        packed_input = pack_padded_sequence(spectrogram, kwargs['spectrogram_length'].cpu(),
+                                            enforce_sorted=False, batch_first=True)
+        print('b')
+        packed_output, _ = self.lstm(packed_input)
+        print('c')
+        output, _ = pad_packed_sequence(packed_output, batch_first=True)
+        print('d')
+        res = self.fc(output)
 
-        output, _ = self.lstm(spectrogram, (h0.detach(), c0.detach()))
-        res = self.fc(output)  # [:, -1, :])
-
-        # print(res.shape)
+        print('e')
         return res
 
     def transform_input_lengths(self, input_lengths):
