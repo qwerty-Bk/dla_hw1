@@ -4,6 +4,7 @@ numpy
 tqdm
 tensorboard
 matplotlib
+wandb
 
 
 pandas
