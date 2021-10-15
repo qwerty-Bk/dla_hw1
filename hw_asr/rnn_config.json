@@ -17,7 +17,7 @@
     "type": "RnnModel",
     "args": {
       "n_feats": 128,
-      "layer_dim": 3,
+      "layer_dim": 2,
       "fc_hidden": 512
     }
   },
@@ -81,14 +81,14 @@
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 500,
+      "epochs": 1000,
       "anneal_strategy": "cos",
       "max_lr": 1e-1,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 500,
+    "epochs": 100,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
@@ -96,6 +96,7 @@
     "early_stop": 100,
     "visualize": "wandb",
     "wandb_project": "dla_hw1_1_rnn",
+    "len_epoch": 33,
     "grad_norm_clip": 10
   }
 }
