@@ -10,5 +10,8 @@ class CTCLossWrapper(CTCLoss):
         targets = kwargs["text_encoded"]
         target_lengths = kwargs["text_encoded_length"]
 
+        # print(log_probs.shape, input_lengths)
+        # print(targets.shape, target_lengths)
+
         return super().forward(log_probs=log_probs, targets=targets,
                                input_lengths=input_lengths, target_lengths=target_lengths)

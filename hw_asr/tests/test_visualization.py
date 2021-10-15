@@ -67,6 +67,3 @@ class TestVisualization(unittest.TestCase):
 
         finally:
             shutil.rmtree(log_dir)
-
-
-

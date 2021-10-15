@@ -8,7 +8,7 @@ class BaselineModel(BaseModel):
     def __init__(self, n_feats, n_class, fc_hidden=512, *args, **kwargs):
         super().__init__(n_feats, n_class, *args, **kwargs)
         self.net = Sequential(
-            # people say it can aproximate any function...
+            # people say it can approximate any function...
             nn.Linear(in_features=n_feats, out_features=fc_hidden),
             nn.ReLU(),
             nn.Linear(in_features=fc_hidden, out_features=fc_hidden),
@@ -17,7 +17,11 @@ class BaselineModel(BaseModel):
         )
 
     def forward(self, spectrogram, *args, **kwargs):
-        return {"logits": self.net(spectrogram)}
+        # print(spectrogram.shape)
+        # print(spectrogram)
+        logits = self.net(spectrogram)
+        # print(logits.shape, logits)
+        return {"logits": logits}
 
     def transform_input_lengths(self, input_lengths):
         return input_lengths  # we don't reduce time dimension here

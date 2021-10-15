@@ -2,7 +2,7 @@ import random
 from random import shuffle
 
 import PIL
-import jiwer
+# import jiwer
 import torch
 import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
@@ -88,6 +88,7 @@ class Trainer(BaseTrainer):
                 tqdm(self.data_loader, desc="train", total=self.len_epoch)
         ):
             try:
+                # print('\n'.join(sorted(batch['text'])))
                 batch = self.process_batch(
                     batch,
                     is_train=True,
@@ -131,6 +132,7 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
+        # print(batch)
         outputs = self.model(**batch)
         if type(outputs) is dict:
             batch.update(outputs)
@@ -138,6 +140,7 @@ class Trainer(BaseTrainer):
             batch["logits"] = outputs
 
         batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
+        # print(batch["log_probs"].shape, batch["log_probs"])
         batch["log_probs_length"] = self.model.transform_input_lengths(
             batch["spectrogram_length"]
         )
@@ -207,7 +210,7 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
         predictions = log_probs.cpu().argmax(-1)
-        pred_texts = [self.text_encoder.ctc_decode(p) for p in predictions]
+        pred_texts = [self.text_encoder.ctc_decode(p.detach().numpy()) for p in predictions]
         argmax_pred_texts = [
             self.text_encoder.decode(p)[: int(l)]
             for p, l in zip(predictions, log_probs_length)

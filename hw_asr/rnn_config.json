@@ -14,9 +14,10 @@
     "spectrogram": []
   },
   "arch": {
-    "type": "BaselineModel",
+    "type": "RnnModel",
     "args": {
       "n_feats": 128,
+      "layer_dim": 3,
       "fc_hidden": 512
     }
   },
@@ -55,7 +56,7 @@
   "optimizer": {
     "type": "SGD",
     "args": {
-      "lr": 3e-4
+      "lr": 1e-2
     }
   },
   "loss": {
@@ -80,21 +81,21 @@
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 50,
+      "epochs": 500,
       "anneal_strategy": "cos",
-      "max_lr": 4e-3,
+      "max_lr": 1e-1,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 500,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
     "monitor": "min val_loss",
     "early_stop": 100,
     "visualize": "wandb",
-    "wandb_project": "dla_hw1_1",
+    "wandb_project": "dla_hw1_1_rnn",
     "grad_norm_clip": 10
   }
 }
