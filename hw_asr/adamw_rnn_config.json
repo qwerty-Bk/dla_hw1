@@ -1,0 +1,102 @@
+{
+  "name": "default_config",
+  "n_gpu": 1,
+  "preprocessing": {
+    "sr": 16000,
+    "spectrogram": {
+      "type": "MelSpectrogram",
+      "args": {
+      }
+    }
+  },
+  "augmentations": {
+    "wave": [],
+    "spectrogram": []
+  },
+  "arch": {
+    "type": "RnnModel",
+    "args": {
+      "n_feats": 128,
+      "layer_dim": 2,
+      "fc_hidden": 512
+    }
+  },
+  "data": {
+    "train": {
+      "batch_size": 20,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "train-clean-100",
+            "max_audio_length": 20.0,
+            "max_text_length": 200,
+            "limit": 20
+          }
+        }
+      ]
+    },
+    "val": {
+      "batch_size": 20,
+      "num_workers": 5,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "dev-clean",
+            "max_audio_length": 20.0,
+            "max_text_length": 200,
+            "limit": 20
+          }
+        }
+      ]
+    }
+  },
+  "optimizer": {
+    "type": "AdamW",
+    "args": {
+      "lr": 1e-2
+    }
+  },
+  "loss": {
+    "type": "CTCLoss",
+    "args": {}
+  },
+  "metrics": [
+    {
+      "type": "ArgmaxWERMetric",
+      "args": {
+        "name": "WER (argmax)"
+      }
+    },
+    {
+      "type": "ArgmaxCERMetric",
+      "args": {
+        "name": "CER (argmax)"
+      }
+    }
+  ],
+  "lr_scheduler": {
+    "type": "OneCycleLR",
+    "args": {
+      "steps_per_epoch": 100,
+      "epochs": 300,
+      "anneal_strategy": "cos",
+      "max_lr": 1e-3,
+      "pct_start": 0.2
+    }
+  },
+  "trainer": {
+    "epochs": 300,
+    "save_dir": "saved/",
+    "save_period": 5,
+    "verbosity": 2,
+    "monitor": "min val_loss",
+    "early_stop": 102,
+    "visualize": "wandb",
+    "wandb_project": "dla_hw1_1_rnn",
+    "len_epoch": 20,
+    "grad_norm_clip": 10
+  }
+}

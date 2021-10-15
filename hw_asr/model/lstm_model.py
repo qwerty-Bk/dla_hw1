@@ -15,17 +15,11 @@ class LstmModel(BaseModel):
         self.fc = nn.Linear(fc_hidden * 2, n_class)
 
     def forward(self, spectrogram, *args, **kwargs):
-        print('a')
         packed_input = pack_padded_sequence(spectrogram, kwargs['spectrogram_length'].cpu(),
                                             enforce_sorted=False, batch_first=True)
-        print('b')
         packed_output, _ = self.lstm(packed_input)
-        print('c')
         output, _ = pad_packed_sequence(packed_output, batch_first=True)
-        print('d')
         res = self.fc(output)
-
-        print('e')
         return res
 
     def transform_input_lengths(self, input_lengths):
