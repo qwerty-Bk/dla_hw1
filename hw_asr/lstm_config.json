@@ -80,15 +80,15 @@
   "lr_scheduler": {
     "type": "OneCycleLR",
       "args": {
-      "steps_per_epoch": 100,
-      "epochs": 100,
+      "steps_per_epoch": 25,
+      "epochs": 50,
       "anneal_strategy": "cos",
       "max_lr": 1e-1,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 100,
+    "epochs": 50,
     "save_dir": "saved/",
     "save_period": 10,
     "verbosity": 2,
