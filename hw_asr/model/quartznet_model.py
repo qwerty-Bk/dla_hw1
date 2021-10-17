@@ -80,24 +80,24 @@ class QuartzNetModel(BaseModel):
         self.b = nn.Sequential(*self.b)
 
         self.c2 = SimpleBlock(channels_b[-1], 512, 87, True, stride=1, dilation=2, padding=86)
-        self.c3 = SimpleBlock(512, 1024, 1, False, stride=1, dilation=1)
+        self.c3 = SimpleBlock(512, 1024, 1, True, stride=1, dilation=1)
         self.c4 = nn.Conv1d(1024, n_class, kernel_size=1, stride=1, dilation=2, bias=False)
 
     def forward(self, spectrogram, *args, **kwargs):
-        print(spectrogram.shape)
+        # print(spectrogram.shape)
         output = transpose(spectrogram, 1, 2)
-        print(output.shape)
+        # print(output.shape)
         output = self.c1(output)
-        print(output.shape)
+        # print(output.shape)
         output = self.b(output)
-        print(output.shape)
+        # print(output.shape)
         output = self.c2(output)
-        print(output.shape)
+        # print(output.shape)
         output = self.c3(output)
-        print(output.shape)
+        # print(output.shape)
         output = self.c4(output)
-        print(output.shape)
-        return 0
+        # print(output.shape)
+        # return 0
         return transpose(output, 1, 2)
 
     def transform_input_lengths(self, input_lengths):
