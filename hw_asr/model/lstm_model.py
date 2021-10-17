@@ -1,5 +1,4 @@
-from torch import nn, zeros
-import torch
+from torch import nn
 from hw_asr.base import BaseModel
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 

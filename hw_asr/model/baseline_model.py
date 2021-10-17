@@ -17,7 +17,7 @@ class BaselineModel(BaseModel):
         )
 
     def forward(self, spectrogram, *args, **kwargs):
-        # print(spectrogram.shape)
+        print(spectrogram.shape)
         # print(spectrogram)
         logits = self.net(spectrogram)
         # print(logits.shape, logits)
