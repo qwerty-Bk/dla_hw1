@@ -15,16 +15,22 @@ class ArgmaxWERMetric(BaseMetric):
 
     def __call__(self, log_probs: Tensor, log_probs_length: Tensor, text: List[str], *args, **kwargs):
         wers = []
-        predictions = torch.argmax(log_probs.cpu(), dim=-1)
-        predictions = [
-            inds[:int(ind_len)] for inds, ind_len in zip(predictions, log_probs_length)
-        ]
-        # print(text[0])
-        # print(log_probs)
-        for log_prob_vec, target_text in zip(predictions, text):
-            if hasattr(self.text_encoder, "ctc_decode"):
-                pred_text = self.text_encoder.ctc_decode(log_prob_vec.cpu().detach().numpy())
-            else:
-                pred_text = self.text_encoder.decode(log_prob_vec.cpu().detach().numpy())
-            wers.append(calc_wer(target_text, pred_text))
+        if hasattr(self.text_encoder, "ctc_beam_search"):
+            log_probs = [
+                inds[:int(ind_len)] for inds, ind_len in zip(log_probs, log_probs_length)
+            ]
+            for log_prob_vec, target_text in zip(log_probs, text):
+                pred_text = self.text_encoder.ctc_beam_search(log_prob_vec)[0][0]
+                wers.append(calc_wer(target_text, pred_text))
+        else:
+            predictions = torch.argmax(log_probs.cpu(), dim=-1)
+            predictions = [
+                inds[:int(ind_len)] for inds, ind_len in zip(predictions, log_probs_length)
+            ]
+            for log_prob_vec, target_text in zip(predictions, text):
+                if hasattr(self.text_encoder, "ctc_decode"):
+                    pred_text = self.text_encoder.ctc_decode(log_prob_vec.cpu().detach().numpy())
+                else:
+                    pred_text = self.text_encoder.decode(log_prob_vec.cpu().detach().numpy())
+                wers.append(calc_wer(target_text, pred_text))
         return sum(wers) / len(wers)

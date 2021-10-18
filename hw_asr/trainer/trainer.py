@@ -88,7 +88,6 @@ class Trainer(BaseTrainer):
                 tqdm(self.data_loader, desc="train", total=self.len_epoch)
         ):
             try:
-                # print('\n'.join(sorted(batch['text'])))
                 batch = self.process_batch(
                     batch,
                     is_train=True,
@@ -132,7 +131,6 @@ class Trainer(BaseTrainer):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
-        # print(batch)
         outputs = self.model(**batch)
         if type(outputs) is dict:
             batch.update(outputs)
@@ -140,7 +138,6 @@ class Trainer(BaseTrainer):
             batch["logits"] = outputs
 
         batch["log_probs"] = F.log_softmax(batch["logits"], dim=-1)
-        # print(batch["log_probs"].shape, batch["log_probs"])
         batch["log_probs_length"] = self.model.transform_input_lengths(
             batch["spectrogram_length"]
         )
@@ -216,11 +213,14 @@ class Trainer(BaseTrainer):
         ]
         argmax_texts_raw = [self.text_encoder.decode(inds) for inds in argmax_inds]
         argmax_texts = [self.text_encoder.ctc_decode(inds.tolist()) for inds in argmax_inds]
-        tuples = list(zip(argmax_texts, text, argmax_texts_raw))
+        beam_texts = [self.text_encoder.ctc_beam_search(log_probs[i][:int(log_probs_length[i])], 100)[0][0]
+                      for i in range(log_probs.shape[0])]
+        tuples = list(zip(argmax_texts, text, argmax_texts_raw, beam_texts))
         shuffle(tuples)
         to_log_pred = []
+        to_log_beam = []
         to_log_pred_raw = []
-        for pred, target, raw_pred in tuples[:examples_to_log]:
+        for pred, target, raw_pred, beam in tuples[:examples_to_log]:
             wer = calc_wer(target, pred) * 100
             cer = calc_cer(target, pred) * 100
             to_log_pred.append(
@@ -228,9 +228,20 @@ class Trainer(BaseTrainer):
                 f"| wer: {wer:.2f} | cer: {cer:.2f}"
             )
             to_log_pred_raw.append(f"true: '{target}' | pred: '{raw_pred}'\n")
+
+            wer_beam = calc_wer(target, beam) * 100
+            cer_beam = calc_cer(target, beam) * 100
+            to_log_beam.append(
+                f"true: '{target}' | pred: '{beam}' "
+                f"| wer: {wer_beam:.2f} | cer: {cer_beam:.2f}"
+            )
+
         self.writer.add_text(f"predictions", "< < < < > > > >".join(to_log_pred))
         self.writer.add_text(
             f"predictions_raw", "< < < < > > > >".join(to_log_pred_raw)
+        )
+        self.writer.add_text(
+            f"predictions_beam", "< < < < > > > >".join(to_log_beam)
         )
 
     def _log_spectrogram(self, spectrogram_batch):
