@@ -6,6 +6,7 @@ from hw_asr.collate_fn.collate import collate_fn
 from hw_asr.datasets import LibrispeechDataset
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_asr.utils.parse_config import ConfigParser
+from hw_asr.augmentations.wave_augmentations.augs import Noise, Impulse
 
 
 class TestDataloader(unittest.TestCase):
@@ -42,6 +43,10 @@ class TestDataloader(unittest.TestCase):
         self.assertEqual(bs, BS)
 
         return batch
+
+    def test_noise_aug(self):
+        aug = Noise()
+        aug = Impulse()
 
     def test_collate_fn_small(self):
         text_encoder = CTCCharTextEncoder.get_simple_alphabet()

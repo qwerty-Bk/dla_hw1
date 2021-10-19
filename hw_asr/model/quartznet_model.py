@@ -79,7 +79,7 @@ class QuartzNetModel(BaseModel):
             )
         self.b = nn.Sequential(*self.b)
 
-        self.c2 = SimpleBlock(channels_b[-1], 512, 87, True, stride=1, dilation=2, padding=86)
+        self.c2 = SimpleBlock(channels_b[-1], 512, 87, True, stride=1, dilation=1, padding=86)
         self.c3 = SimpleBlock(512, 1024, 1, True, stride=1, dilation=1)
         self.c4 = nn.Conv1d(1024, n_class, kernel_size=1, stride=1, dilation=2, bias=False)
 

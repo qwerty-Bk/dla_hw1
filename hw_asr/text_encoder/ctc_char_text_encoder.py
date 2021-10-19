@@ -4,7 +4,6 @@ import torch
 import pyctcdecode
 import gzip
 import os, shutil, wget
-import numpy as np
 
 from hw_asr.utils import ROOT_PATH
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
@@ -44,6 +43,7 @@ class CTCCharTextEncoder(CharTextEncoder):
 
         gz_three_gram_path = "3-gram.pruned.1e-7.arpa.gz"
         data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
+        data_dir.mkdir(exist_ok=True, parents=True)
         if not os.path.exists(data_dir / gz_three_gram_path):
             print('Downloading pruned 3-gram model.')
             lm_url = 'http://www.openslr.org/resources/11/3-gram.pruned.1e-7.arpa.gz'
