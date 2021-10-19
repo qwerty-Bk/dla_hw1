@@ -26,13 +26,14 @@ class Noise(AugmentationBase):
             print('Unzipped the audios.')
 
         flac_dir = data_dir / audio_path / "aug_audio"
-        self.paths = list(flac_dir.glob("*.wav"))
+        paths = list(flac_dir.glob("*.wav"))
+        self.noises = [librosa.load(paths[i])[0] for i, path in enumerate(paths)]
         self.last_audio = 0
-        self.audio_number = len(self.paths)
+        self.audio_number = len(paths)
 
     def __call__(self, wav: torch.Tensor, *args, **kwargs):
         wav = wav.squeeze()
-        noise, _ = librosa.load(self.paths[self.last_audio])
+        noise = self.noises[self.last_audio]
         self.last_audio = (self.last_audio + 1) % self.audio_number
         noize_level = torch.randint(20, size=(1,))
 
@@ -54,7 +55,4 @@ class Noise(AugmentationBase):
             augumented_wav = torch.cat((augumented_wav, wav[..., noise.shape[0]:]))
         augumented_wav = torch.clamp(augumented_wav, -1, 1)
 
-        return augumented_wav.unsqueeze(0)
-
-
-
+        return augumented_wav
