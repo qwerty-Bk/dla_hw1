@@ -5,7 +5,7 @@ from hw_asr.augmentations.base import AugmentationBase
 
 
 class Pitch(AugmentationBase):
-    def __init__(self, r1=0.3, r2=3):
+    def __init__(self, r1=0.2, r2=5):
         self.r1 = r1
         self.r2 = r2
 

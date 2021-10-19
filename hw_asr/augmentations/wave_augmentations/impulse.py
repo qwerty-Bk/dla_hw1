@@ -2,6 +2,7 @@ import torch
 import os
 import gdown
 import torchaudio
+import torch.nn.functional as F
 
 from hw_asr.augmentations.base import AugmentationBase
 from hw_asr.utils import ROOT_PATH

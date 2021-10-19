@@ -11,7 +11,7 @@ from hw_asr.augmentations.random_apply import RandomApply
 def from_configs(configs: ConfigParser):
     wave_augs = []
     if "augmentations" in configs.config and "random_apply" in configs.config["augmentations"]:
-        ra = int(configs.config["augmentations"]["random_apply"])
+        ra = float(configs.config["augmentations"]["random_apply"])
     else:
         ra = 0.1
     if "augmentations" in configs.config and "wave" in configs.config["augmentations"]:

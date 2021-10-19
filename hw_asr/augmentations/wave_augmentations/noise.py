@@ -34,7 +34,7 @@ class Noise(AugmentationBase):
         wav = wav.squeeze()
         noise, _ = librosa.load(self.paths[self.last_audio])
         self.last_audio = (self.last_audio + 1) % self.audio_number
-        noize_level = torch.randint(40, size=(1,))
+        noize_level = torch.randint(20, size=(1,))
 
         noize_energy = torch.norm(torch.from_numpy(noise))
         audio_energy = torch.norm(wav)

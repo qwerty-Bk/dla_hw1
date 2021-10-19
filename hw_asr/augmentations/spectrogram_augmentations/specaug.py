@@ -17,4 +17,4 @@ class SpecAug(AugmentationBase):
         )
 
     def __call__(self, log_mel: torch.Tensor, *args, **kwargs):
-        return self.specaug(log_mel)
+        return self.specaug(log_mel).squeeze()
