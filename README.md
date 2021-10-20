@@ -1,8 +1,8 @@
-# ASR project barebones
+# ASR project 
 
 ## Installation guide
 
-< Write your installation guide here >
+1.
 
 ```shell
 pip install -r ./requirements.txt
