@@ -33,12 +33,12 @@ class MainBlock(nn.Module):
         c_now = c_in
         for i in range(r - 1):
             seq.append(ConvBlock(c_now, c_out, kernel_size, True, stride, dilation, padding))
-            seq.append(nn.ReLU())
+            seq.append(nn.GELU())
             c_now = c_out
         seq.append(ConvBlock(c_now, c_out, kernel_size, True, stride, dilation, padding))
         self.seq = nn.Sequential(*seq)
         self.residual = ConvBlock(c_in, c_out, kernel_size=1, tcs=False, stride=1, dilation=1, padding=0)
-        self.activation = nn.ReLU()
+        self.activation = nn.GELU()
 
     def forward(self, x):
         output = self.seq(x)
@@ -55,7 +55,7 @@ class SimpleBlock(nn.Module):
             padding = kernel_size // 2
         self.seq = nn.Sequential(
             ConvBlock(c_in, c_out, kernel_size, tcs, stride, dilation, padding),
-            nn.ReLU()
+            nn.GELU()
         )
 
     def forward(self, x):

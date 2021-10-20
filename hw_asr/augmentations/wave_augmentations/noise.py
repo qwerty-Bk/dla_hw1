@@ -27,7 +27,9 @@ class Noise(AugmentationBase):
 
         flac_dir = data_dir / audio_path / "aug_audio"
         paths = list(flac_dir.glob("*.wav"))
+        print("Loading noise...")
         self.noises = [librosa.load(paths[i])[0] for i, path in enumerate(paths)]
+        print("Noise loaded.")
         self.last_audio = 0
         self.audio_number = len(paths)
 

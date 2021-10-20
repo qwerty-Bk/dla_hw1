@@ -19,7 +19,6 @@ def collate_fn(dataset_items: List[dict]):
     for i in range(len(dataset_items)):
         for k, v in dataset_items[i].items():
             if k in tensor_keys:
-                # print(k, v.shape)
                 v = v.squeeze(0)
                 if k == 'spectrogram':
                     v = torch.transpose(v, 0, 1)
@@ -34,11 +33,6 @@ def collate_fn(dataset_items: List[dict]):
                     result_batch[k] = []
                 result_batch[k].append(v)
     for k in tensor_keys:
-        # print(k)
-        # print(result_batch[k + '_length'])
-        # print([b.shape for b in result_batch[k]])
         result_batch[k] = pad_sequence(result_batch[k], batch_first=True, padding_value=-1)
         result_batch[k + '_length'] = torch.from_numpy(np.array(result_batch[k + '_length']))
-    # result_batch['spectrogram'] = torch.transpose(result_batch['spectrogram'], 1, 2)
-    # print('aaaaaaaaaaaa')
     return result_batch

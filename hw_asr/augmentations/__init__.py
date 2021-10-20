@@ -10,26 +10,24 @@ from hw_asr.augmentations.random_apply import RandomApply
 
 def from_configs(configs: ConfigParser):
     wave_augs = []
-    if "augmentations" in configs.config and "random_apply" in configs.config["augmentations"]:
-        ra = float(configs.config["augmentations"]["random_apply"])
-    else:
-        ra = 0.1
     if "augmentations" in configs.config and "wave" in configs.config["augmentations"]:
         for aug_dict in configs.config["augmentations"]["wave"]:
+            p = float(aug_dict.get("p", 0.2))
             wave_augs.append(
                 RandomApply(
                     configs.init_obj(aug_dict, hw_asr.augmentations.wave_augmentations),
-                    ra
+                    p
                 )
             )
 
     spec_augs = []
     if "augmentations" in configs.config and "spectrogram" in configs.config["augmentations"]:
         for aug_dict in configs.config["augmentations"]["spectrogram"]:
+            p = float(aug_dict.get("p", 0.2))
             spec_augs.append(
                 RandomApply(
                     configs.init_obj(aug_dict, hw_asr.augmentations.spectrogram_augmentations),
-                    ra
+                    p
                 )
             )
     return _to_function(wave_augs), _to_function(spec_augs)

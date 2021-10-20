@@ -10,8 +10,32 @@
     }
   },
   "augmentations": {
-    "wave": [],
-    "spectrogram": []
+    "wave": [
+      {
+        "type": "Gain",
+        "args": {}
+      },
+      {
+        "type": "Noise",
+        "args": {}
+      },
+      {
+        "type": "Pitch",
+        "args": {}
+      },
+      {
+        "type": "Stretch",
+        "args": {}
+      }
+    ],
+    "spectrogram": [
+      {
+        "type": "SpecAug",
+        "args": {
+          "freq_mask": 20,
+          "time_mask": 100
+        }
+      }]
   },
   "arch": {
     "type": "RnnModel",
@@ -31,8 +55,7 @@
           "args": {
             "part": "train-clean-100",
             "max_audio_length": 20.0,
-            "max_text_length": 200,
-            "limit": 20
+            "max_text_length": 200
           }
         }
       ]
@@ -46,8 +69,7 @@
           "args": {
             "part": "dev-clean",
             "max_audio_length": 20.0,
-            "max_text_length": 200,
-            "limit": 20
+            "max_text_length": 200
           }
         }
       ]
@@ -56,7 +78,8 @@
   "optimizer": {
     "type": "AdamW",
     "args": {
-      "lr": 1e-2
+      "lr": 3e-4,
+      "weight_decay": 1e-3
     }
   },
   "loss": {
@@ -78,25 +101,23 @@
     }
   ],
   "lr_scheduler": {
-    "type": "OneCycleLR",
-    "args": {
-      "steps_per_epoch": 100,
-      "epochs": 300,
-      "anneal_strategy": "cos",
-      "max_lr": 1e-3,
-      "pct_start": 0.2
+    "type": "CosineAnnealingLR",
+      "args": {
+      "T_max": 50,
+      "eta_min": 0,
+      "last_epoch": -1
     }
   },
   "trainer": {
-    "epochs": 300,
+    "epochs": 50,
     "save_dir": "saved/",
-    "save_period": 5,
+    "save_period": 10,
     "verbosity": 2,
     "monitor": "min val_loss",
-    "early_stop": 102,
+    "early_stop": 100,
     "visualize": "wandb",
-    "wandb_project": "dla_hw1_1_rnn",
-    "len_epoch": 20,
+    "wandb_project": "dla_hw1_1_rnn_v2",
+    "len_epoch": 500,
     "grad_norm_clip": 10
   }
 }

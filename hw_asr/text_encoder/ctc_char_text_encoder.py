@@ -12,8 +12,8 @@ from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 class CTCCharTextEncoder(CharTextEncoder):
     EMPTY_TOK = "^"
 
-    def __init__(self, alphabet: List[str]):
-        super().__init__(alphabet)
+    def __init__(self, alphabet: List[str], bpe: bool = False):
+        super().__init__(alphabet, bpe)
         self.ind2char = {
             0: self.EMPTY_TOK
         }
@@ -26,15 +26,19 @@ class CTCCharTextEncoder(CharTextEncoder):
         )
 
     def ctc_decode(self, inds: List[int]) -> str:
-        res = ""
+        res = []
         prev_empty = False
         for ind in inds:
             if ind == 0:
                 prev_empty = True
             else:
                 if len(res) == 0 or res[-1] != self.ind2char[ind] or res[-1] == self.ind2char[ind] and prev_empty:
-                    res += self.ind2char[ind]
+                    res.append(self.ind2char[ind])
                 prev_empty = False
+        if self.bpe:
+            res = self.bpe_encoder.decode(res)
+        else:
+            res = ''.join(res)
         return res
 
     def prepare_kenlm(self):

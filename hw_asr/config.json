@@ -10,8 +10,33 @@
     }
   },
   "augmentations": {
-    "wave": [],
-    "spectrogram": []
+    "random_apply": 0.1,
+    "wave": [
+      {
+        "type": "Gain",
+        "args": {}
+      },
+      {
+        "type": "Noise",
+        "args": {}
+      },
+      {
+        "type": "Pitch",
+        "args": {}
+      },
+      {
+        "type": "Stretch",
+        "args": {}
+      }
+    ],
+    "spectrogram": [
+      {
+        "type": "SpecAug",
+        "args": {
+          "freq_mask": 20,
+          "time_mask": 100
+        }
+      }]
   },
   "arch": {
     "type": "BaselineModel",

@@ -1,20 +1,24 @@
-import torchaudio.transforms
 import torch
 
 from hw_asr.augmentations.base import AugmentationBase
+import random
 
 
 class SpecAug(AugmentationBase):
     def __init__(self, *args, **kwargs):
-        freq_mask, time_mask = 100, 20
-        if "freq_mask" in kwargs.keys():
-            freq_mask = kwargs["freq_mask"]
-        if "time_mask" in kwargs.keys():
-            time_mask = kwargs["time_mask"]
-        self.specaug = torch.nn.Sequential(
-            torchaudio.transforms.FrequencyMasking(freq_mask),
-            torchaudio.transforms.TimeMasking(time_mask),
-        )
+        self.masks = [kwargs.get("freq_mask", 20), kwargs.get("time_mask", 100)]
+        self.repeat = kwargs.get("repeat", 2)
+
+    def _mask(self, spec, axis):
+        for i in range(self.repeat):
+            mask = random.randrange(0, self.masks[axis])
+            mask_zero = random.randrange(0, spec.shape[1 + axis] - mask)
+            if mask_zero == mask_zero + mask:
+                return spec
+            mask_end = random.randrange(mask_zero, mask_zero + mask)
+            spec[0][mask_zero:mask_end] = spec.mean()
+        return spec
 
     def __call__(self, log_mel: torch.Tensor, *args, **kwargs):
-        return self.specaug(log_mel).squeeze()
+        res = self._mask(log_mel, 0)
+        return self._mask(res, 0)

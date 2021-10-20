@@ -10,7 +10,6 @@
     }
   },
   "augmentations": {
-    "random_apply": 0.1,
     "wave": [
       {
         "type": "Gain",
@@ -18,7 +17,9 @@
       },
       {
         "type": "Noise",
-        "args": {}
+        "args": {
+          "p": 1
+        }
       },
       {
         "type": "Pitch",
@@ -34,7 +35,8 @@
         "type": "SpecAug",
         "args": {
           "freq_mask": 20,
-          "time_mask": 100
+          "time_mask": 100,
+          "repeat": 2
         }
       }]
   },
@@ -54,8 +56,7 @@
           "args": {
             "part": "train-clean-100",
             "max_audio_length": 20.0,
-            "max_text_length": 200,
-            "limit": 20
+            "max_text_length": 200
           }
         }
       ]
@@ -69,8 +70,7 @@
           "args": {
             "part": "dev-clean",
             "max_audio_length": 20.0,
-            "max_text_length": 200,
-            "limit": 20
+            "max_text_length": 200
           }
         }
       ]
@@ -79,7 +79,8 @@
   "optimizer": {
     "type": "AdamW",
     "args": {
-      "lr": 3e-4
+      "lr": 3e-4,
+      "weight_decay": 1e-3
     }
   },
   "loss": {
@@ -101,13 +102,11 @@
     }
   ],
   "lr_scheduler": {
-    "type": "OneCycleLR",
+    "type": "CosineAnnealingLR",
       "args": {
-      "steps_per_epoch": 25,
-      "epochs": 50,
-      "anneal_strategy": "cos",
-      "max_lr": 1e-1,
-      "pct_start": 0.2
+      "T_max": 50,
+      "eta_min": 0,
+      "last_epoch": -1
     }
   },
   "trainer": {
@@ -119,7 +118,7 @@
     "early_stop": 100,
     "visualize": "wandb",
     "wandb_project": "dla_hw1_1_quartz",
-    "len_epoch": 25,
+    "len_epoch": 500,
     "grad_norm_clip": 10
   }
 }
