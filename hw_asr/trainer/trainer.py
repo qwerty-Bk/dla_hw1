@@ -225,7 +225,7 @@ class Trainer(BaseTrainer):
                 f"true: '{target}' | pred: '{pred}' "
                 f"| wer: {wer:.2f} | cer: {cer:.2f}"
             )
-            to_log_pred_raw.append(f"true: '{target}' | pred: '{raw_pred}'\n")
+            to_log_pred_raw.append(f"true: '{target}' | pred: '{raw_pred}'\n".replace("▁", '_'))
 
         self.writer.add_text(f"predictions", "< < < < > > > >".join(to_log_pred))
         self.writer.add_text(

@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import torch
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
-
+from hw_asr.text_encoder.bpe_text_encoder import BPETextEncoder
 
 class TestTextEncoder(unittest.TestCase):
     def test_ctc_decode(self):
@@ -14,11 +14,17 @@ class TestTextEncoder(unittest.TestCase):
         decoded_text = text_encoder.ctc_decode(inds)
         self.assertIn(decoded_text, true_text)
 
+    def test_bpe_encoder(self):
+        text_encoder = BPETextEncoder()
+        encoded_polina = text_encoder.encode("i love polina")
+        print(text_encoder.ctc_decode(encoded_polina.tolist()))
+        assert "i love polina" == text_encoder.ctc_decode(encoded_polina.tolist())
+
     def test_beam_search(self):
         text_encoder = CTCCharTextEncoder([
             " ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
             "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        ], False)
+        ])
         np.random.seed(3407)
         a = np.random.random((5, 28))
         logits = np.array([a[i] / a.sum(1)[i] for i in range(len(a))])
