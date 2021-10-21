@@ -104,14 +104,14 @@
   "lr_scheduler": {
     "type": "OneCycleLR",
     "args": {
-      "steps_per_epoch": 100,
-      "epochs": 50,
+      "steps_per_epoch": 128,
+      "epochs": 64,
       "anneal_strategy": "linear",
       "max_lr": 5e-4
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 64,
     "save_dir": "saved/",
     "save_period": 10,
     "verbosity": 2,
@@ -120,6 +120,6 @@
     "visualize": "wandb",
     "wandb_project": "dla_hw1_1_crnn_lj",
     "grad_norm_clip": 10,
-    "len_epoch": 100
+    "len_epoch": 128
   }
 }
