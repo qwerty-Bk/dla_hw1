@@ -104,8 +104,8 @@
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
-            "steps_per_epoch": 750,
-            "epochs": 50,
+            "steps_per_epoch": 500,
+            "epochs": 40,
             "anneal_strategy": "linear",
             "max_lr": 0.0005
         }
@@ -120,6 +120,6 @@
         "visualize": "wandb",
         "wandb_project": "dla_hw1_1_crnn_360",
         "grad_norm_clip": 10,
-        "len_epoch": 750
+        "len_epoch": 500
     }
 }
