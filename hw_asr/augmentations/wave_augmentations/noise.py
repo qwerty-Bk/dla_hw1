@@ -26,7 +26,7 @@ class Noise(AugmentationBase):
             print('Unzipped the audios.')
 
         flac_dir = data_dir / audio_path / "aug_audio"
-        paths = list(flac_dir.glob("*.wav"))[:1] # AAAAAAAAAAAAAAAAAAAAAAA
+        paths = list(flac_dir.glob("*.wav"))
         print("Loading noise...")
         self.noises = [librosa.load(paths[i])[0] for i, path in enumerate(paths)]
         print("Noise loaded.")
