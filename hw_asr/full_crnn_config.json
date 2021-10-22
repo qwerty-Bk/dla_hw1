@@ -1,0 +1,125 @@
+{
+    "name": "default_config",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 16000,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {}
+        }
+    },
+    "augmentations": {
+        "wave": [
+            {
+                "type": "Gain",
+                "args": {}
+            },
+            {
+                "type": "Noise",
+                "args": {}
+            },
+            {
+                "type": "Pitch",
+                "args": {}
+            },
+            {
+                "type": "Stretch",
+                "args": {}
+            }
+        ],
+        "spectrogram": [
+            {
+                "type": "SpecAug",
+                "args": {
+                    "freq_mask": 10,
+                    "time_mask": 60,
+                    "repeat": 2
+                }
+            }
+        ]
+    },
+    "arch": {
+        "type": "CRNNModel",
+        "args": {
+            "n_feats": 128,
+            "n_cnn": 4,
+            "n_rnn": 6,
+            "hidden_size": 512
+        }
+    },
+    "data": {
+        "train": {
+            "batch_size": 20,
+            "num_workers": 5,
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "train-clean-100",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 400
+                    }
+                }
+            ]
+        },
+        "val": {
+            "batch_size": 20,
+            "num_workers": 5,
+            "datasets": [
+                {
+                    "type": "LibrispeechDataset",
+                    "args": {
+                        "part": "dev-clean",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 400
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 0.0005
+        }
+    },
+    "loss": {
+        "type": "CTCLoss",
+        "args": {}
+    },
+    "metrics": [
+        {
+            "type": "ArgmaxWERMetric",
+            "args": {
+                "name": "WER (argmax)"
+            }
+        },
+        {
+            "type": "ArgmaxCERMetric",
+            "args": {
+                "name": "CER (argmax)"
+            }
+        }
+    ],
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 750,
+            "epochs": 150,
+            "anneal_strategy": "linear",
+            "max_lr": 0.0005
+        }
+    },
+    "trainer": {
+        "epochs": 150,
+        "save_dir": "saved/",
+        "save_period": 10,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 100,
+        "visualize": "wandb",
+        "wandb_project": "dla_hw1_1_crnn_full",
+        "grad_norm_clip": 10,
+        "len_epoch": 750
+    }
+}
