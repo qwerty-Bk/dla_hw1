@@ -1,0 +1,16 @@
+{
+  "data": {
+    "test": {
+      "num_workers": 4,
+      "batch_size": 20,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "test-clean"
+          }
+        }
+      ]
+    }
+  }
+}

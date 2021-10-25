@@ -16,7 +16,7 @@ class Impulse(AugmentationBase):
         if not os.path.exists(data_dir / room_audio):
             print('Downloading audios for aug.')
             gdown.download(output=str(data_dir / room_audio), id="1es0v3-SKYMxW_dbQjab1aexz2F-qPldX")
-            print('Downloaded the room audios.')
+            print('Downloaded the room audio.')
 
         self.room = torchaudio.load(data_dir / room_audio)
 

@@ -12,6 +12,8 @@ from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_asr.trainer import Trainer
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.parse_config import ConfigParser
+from hw_asr.metric.cer_metric import calc_cer
+from hw_asr.metric.wer_metric import calc_wer
 
 DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 
@@ -20,7 +22,13 @@ def main(config, out_file):
     logger = config.get_logger("test")
 
     # text_encoder
-    text_encoder = CTCCharTextEncoder.get_simple_alphabet()
+    language = config.get('lang', 'en')
+    if language == 'en':
+        text_encoder = CTCCharTextEncoder.get_simple_alphabet()
+    elif language == 'ru':
+        text_encoder = CTCCharTextEncoder.get_russian_alphabet()
+    else:
+        raise ValueError(f'Incorrect language. Supported languages: en, ru. Got: {language}')
 
     # setup data_loader instances
     dataloaders = get_dataloaders(config, text_encoder)
@@ -43,6 +51,9 @@ def main(config, out_file):
 
     results = []
 
+    wer_sum, cer_sum = 0, 0
+    wer_bs_sum, cer_bs_sum = 0, 0
+
     with torch.no_grad():
         for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
             batch = Trainer.move_batch_to_device(batch, device)
@@ -58,16 +69,38 @@ def main(config, out_file):
             batch["probs"] = batch["log_probs"].exp().cpu()
             batch["argmax"] = batch["probs"].argmax(-1)
             for i in range(len(batch["text"])):
+                argmax = batch["argmax"][i]
+                argmax = argmax[:int(batch["log_probs_length"][i])]
+                probs = batch["log_probs"][i]
+                probs = probs[:int(batch["log_probs_length"][i])]
+                pred_text_argmax = text_encoder.ctc_decode(argmax.tolist())
+                pred_text_bs = text_encoder.ctc_beam_search(probs)
+                wer_argmax = calc_wer(batch["text"][i], pred_text_argmax)
+                cer_argmax = calc_cer(batch["text"][i], pred_text_argmax)
+                wer_bs = calc_wer(batch["text"][i], pred_text_bs[0][0])
+                cer_bs = calc_cer(batch["text"][i], pred_text_bs[0][0])
                 results.append(
                     {
                         "ground_trurh": batch["text"][i],
-                        "pred_text_argmax": text_encoder.ctc_decode(batch["argmax"][i]),
-                        "pred_text_beam_search": text_encoder.ctc_beam_search(
-                            batch["probs"], beam_size=100
-                        )[:10],
+                        "pred_text_argmax": pred_text_argmax,
+                        "pred_text_beam_search": pred_text_bs[:10],
+                        "wer_argmax": wer_argmax,
+                        "cer_argmax": cer_argmax,
+                        "wer_bs": wer_bs,
+                        "cer_bs": cer_bs
                     }
                 )
+                wer_sum += wer_argmax
+                cer_sum += cer_argmax
+                wer_bs_sum += wer_bs
+                cer_bs_sum += cer_bs
     with Path(out_file).open("w") as f:
+        json.dump({
+            "final_wer": wer_sum / len(results),
+            "final_cer": cer_sum / len(results),
+            "final_wer_beam_search": wer_bs_sum / len(results),
+            "final_cer_beam_search": cer_bs_sum / len(results)
+        }, f, indent=2)
         json.dump(results, f, indent=2)
 
 
@@ -138,7 +171,7 @@ if __name__ == "__main__":
     # update with addition configs from `args.config` if provided
     if args.config is not None:
         with Path(args.config).open() as f:
-            config.config.upadte(json.load(f))
+            config.config.update(json.load(f))
 
     # if `--test-data-folder` was provided, set it as a default test set
     if args.test_data_folder is not None:
@@ -164,6 +197,6 @@ if __name__ == "__main__":
 
     assert config.config.get("data", {}).get("test", None) is not None
     config["data"]["test"]["batch_size"] = args.batch_size
-    config["data"]["test"]["n_jobs"] = args.n_jobs
+    config["data"]["test"]["n_jobs"] = args.jobs
 
     main(config, args.output)

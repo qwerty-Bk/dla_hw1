@@ -23,11 +23,10 @@ def collate_fn(dataset_items: List[dict]):
                 if k == 'spectrogram':
                     v = torch.transpose(v, 0, 1)
                 if i == 0:
-                    result_batch[k] = [v]
-                    result_batch[k + '_length'] = [v.shape[0]]
-                else:
-                    result_batch[k].append(v)
-                    result_batch[k + '_length'].append(v.shape[0])
+                    result_batch[k] = []
+                    result_batch[k + '_length'] = []
+                result_batch[k].append(v)
+                result_batch[k + '_length'].append(v.shape[0])
             else:
                 if i == 0:
                     result_batch[k] = []

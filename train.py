@@ -10,6 +10,7 @@ import hw_asr.metric as module_metric
 import hw_asr.model as module_arch
 from hw_asr.datasets.utils import get_dataloaders
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
+from hw_asr.text_encoder.bpe_text_encoder import BPETextEncoder
 from hw_asr.trainer import Trainer
 from hw_asr.utils import prepare_device
 from hw_asr.utils.parse_config import ConfigParser
@@ -28,7 +29,13 @@ def main(config):
     logger = config.get_logger("train")
 
     # text_encoder
-    text_encoder = CTCCharTextEncoder.get_simple_alphabet()
+    language = config.get('lang', 'en')
+    if language == 'en':
+        text_encoder = CTCCharTextEncoder.get_simple_alphabet()
+    elif language == 'ru':
+        text_encoder = CTCCharTextEncoder.get_russian_alphabet()
+    else:
+        raise ValueError(f'Incorrect language. Supported languages: en, ru. Got: {language}')
 
     # setup data_loader instances
     dataloaders = get_dataloaders(config, text_encoder)
