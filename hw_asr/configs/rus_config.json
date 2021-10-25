@@ -1,7 +1,7 @@
 {
     "name": "default_config",
     "n_gpu": 1,
-    "language": "ru",
+    "lang": "ru",
     "preprocessing": {
         "sr": 16000,
         "spectrogram": {

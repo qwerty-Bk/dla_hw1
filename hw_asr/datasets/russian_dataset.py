@@ -36,8 +36,7 @@ class RussianDataset(BaseDataset):
     def _load_part(self, part):
         arch_path = self._data_dir / f"{part}.tar.gz"
         print(f"Loading part {part}")
-        if not os.path.exists(arch_path):
-            download_file(URL_LINKS[part], arch_path)
+        download_file(URL_LINKS[part], arch_path)
         shutil.unpack_archive(arch_path, self._data_dir)
         for fpath in (self._data_dir / "Russian").iterdir():
             shutil.move(str(fpath), str(self._data_dir / fpath.name))
@@ -61,30 +60,24 @@ class RussianDataset(BaseDataset):
         if not split_dir.exists():
             self._load_part(part)
 
-        1 / 0
-        flac_dirs = set()
+        opus_paths = set()
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
-            if any([f.endswith(".flac") for f in filenames]):
-                flac_dirs.add(dirpath)
-        for flac_dir in tqdm(
-                list(flac_dirs), desc=f"Preparing russian lang folders: {part}"
-        ):
-            flac_dir = Path(flac_dir)
-            trans_path = list(flac_dir.glob("*.trans.txt"))[0]
-            with trans_path.open() as f:
-                for line in f:
-                    f_id = line.split()[0]
-                    f_text = " ".join(line.split()[1:]).strip()
-                    flac_path = flac_dir / f"{f_id}.flac"
-                    t_info = torchaudio.info(str(flac_path))
-                    length = t_info.num_frames / t_info.sample_rate
-                    index.append(
-                        {
-                            "path": str(flac_path.absolute().resolve()),
-                            "text": f_text.lower(),
-                            "audio_len": length,
-                        }
-                    )
+            for opus_name in filenames:
+                if opus_name.endswith(".opus"):
+                    text_name = '.'.join(opus_name.split('.')[:-1] + ['txt'])
+                    with Path(text_name).open() as f:
+                        f_text = " ".join(f.readlines()).strip()
+                        t_info = torchaudio.info(str(opus_name))
+                        length = t_info.num_frames / t_info.sample_rate
+                        index.append(
+                            {
+                                "path": str(Path(opus_name).absolute().resolve()),
+                                "text": f_text.lower(),
+                                "audio_len": length,
+                            }
+                        )
+                        print(index)
+                        1 / 0
         return index
 
 
