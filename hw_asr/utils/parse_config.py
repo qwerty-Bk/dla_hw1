@@ -86,7 +86,6 @@ class ConfigParser:
         is equivalent to
         `object = module.name(a, b=1)`
         """
-        # print(obj_dict)
         module_name = obj_dict["type"]
         module_args = dict(obj_dict["args"])
         assert all(

@@ -19,7 +19,7 @@ class RnnModel(BaseModel):
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         output, h0 = self.rnn(spectrogram, h0.to(device))
-        return self.fc(output) # [:, -1, :])
+        return self.fc(output)
 
     def transform_input_lengths(self, input_lengths):
         return input_lengths  # we don't reduce time dimension here

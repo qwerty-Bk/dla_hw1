@@ -1,8 +1,6 @@
-import random
 from random import shuffle
 
 import PIL
-# import jiwer
 import torch
 import torch.nn.functional as F
 from torch.nn.utils import clip_grad_norm_
@@ -234,8 +232,6 @@ class Trainer(BaseTrainer):
 
     def _log_spectrogram(self, spectrogram_batch, spectrogram_length):
         ind = torch.randint(spectrogram_batch.shape[0], size=(1,)).item()
-        # print(spectrogram_batch[ind].shape)
-        # print(spectrogram_length[ind])
         spectrogram = spectrogram_batch[ind][:spectrogram_length[ind], :]
         image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram.cpu().log()))
         self.writer.add_image("spectrogram", ToTensor()(image))

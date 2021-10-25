@@ -65,7 +65,6 @@ class SimpleBlock(nn.Module):
 class QuartzNetModel(BaseModel):
     def __init__(self, n_feats, n_class, r=5, *args, **kwargs):
         super(QuartzNetModel, self).__init__(n_feats, n_class, *args, **kwargs)
-        print("Building QuartzNet-{}x{}".format(r * 5, 5))
 
         kernel_sizes_b = [33, 39, 51, 63, 75]
         channels_b = [256, 256, 256, 512, 512, 512]

@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 
 class ResidualCNN(nn.Module):
+    """Heavily inspired by https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch/"""
     """Residual cnn, see https://arxiv.org/pdf/1603.05027.pdf + layer norm (taught in шад)"""
 
     def __init__(self, in_channels, out_channels, kernel, stride, dropout, n_feats):

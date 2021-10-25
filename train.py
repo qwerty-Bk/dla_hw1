@@ -10,7 +10,6 @@ import hw_asr.metric as module_metric
 import hw_asr.model as module_arch
 from hw_asr.datasets.utils import get_dataloaders
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
-from hw_asr.text_encoder.bpe_text_encoder import BPETextEncoder
 from hw_asr.trainer import Trainer
 from hw_asr.utils import prepare_device
 from hw_asr.utils.parse_config import ConfigParser

@@ -60,7 +60,6 @@ class RussianDataset(BaseDataset):
         if not split_dir.exists():
             self._load_part(part)
 
-        opus_paths = set()
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
             for opus_name in filenames:
                 if "train" in part and opus_name.endswith(".opus") or \

@@ -2,18 +2,32 @@
 
 ## Installation guide
 
-1.
+1. Installation
 
 ```shell
-pip install -r ./requirements.txt
+git clone -b final https://github.com/qwerty-Bk/dla_hw1.git
+pip3 install -r ./requirements.txt
 ```
+
+2. Downloading the pretrained model
+```shell
+import gdown
+gdown.download('https://drive.google.com/uc?id=10cW_aNW0H1VBFFyF2fR2aEnLct-sQBP1', 'cp.pth', True)
+gdown.download('https://drive.google.com/uc?id=1oQwM4_QrxDIB4G2ZNWKVoB30vuVmdNhr', 'config.json', True)
+```
+
+3. Getting the results (in output.json file, the first lines are wer and cer of the novel before and after appyling the LM model, and the rest of the lines are the predictions)
+```shell
+python3 dla_hw1/test.py -c your_test_config -o your_output_file_location -r cp.pth
+```
+
 
 ## Recommended implementation order
 
 You might be a little intimidated by the number of folders and classes. Try to follow this steps to gradually undestand
 the workflow.
 
-1) Test `hw_asr/tests/test_dataset.py`  and `hw_asr/tests/test_config.py` and make sure everythin works for you
+1) Test `hw_asr/tests/test_dataset.py`  and `hw_asr/tests/test_config.py` and make sure everything works for you
 2) Implement missing functions to fix tests in  `hw_asr\tests\test_text_encoder.py`
 3) Implement missing functions to fix tests in  `hw_asr\tests\test_dataloader.py`
 4) Implement functions in `hw_asr\metric\utils.py`

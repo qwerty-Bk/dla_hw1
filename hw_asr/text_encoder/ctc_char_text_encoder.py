@@ -4,6 +4,7 @@ import torch
 import pyctcdecode
 import gzip
 import os, shutil, wget
+import re
 
 from hw_asr.utils import ROOT_PATH
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
@@ -26,6 +27,14 @@ class CTCCharTextEncoder(CharTextEncoder):
             self.bs_decoder = pyctcdecode.decoder.build_ctcdecoder(
                 [''] + alphabet, lm_path, unigram_list
             )
+
+    def normalize_text(self, text: str):
+        if self.lang == 'en':
+            return super().normalize_text(text)
+        else:
+            text = text.lower()
+            text = re.sub(r"[^а-яё ]", "", text)
+            return text
 
     def _ctc_decode(self, inds: List[int]) -> List[int]:
         res = []

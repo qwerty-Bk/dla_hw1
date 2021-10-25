@@ -5,6 +5,7 @@ import torch
 from hw_asr.text_encoder.ctc_char_text_encoder import CTCCharTextEncoder
 from hw_asr.text_encoder.bpe_text_encoder import BPETextEncoder
 
+
 class TestTextEncoder(unittest.TestCase):
     def test_ctc_decode(self):
         text_encoder = CTCCharTextEncoder.get_simple_alphabet()
@@ -38,11 +39,9 @@ class TestTextEncoder(unittest.TestCase):
         return probs
 
     def test_beam_search_Polina(self):
+        # test borrowed from Polina Guseva
         # true_text = "bugz bunny"
-        text_encoder = CTCCharTextEncoder([
-            " ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-            "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        ])
+        text_encoder = CTCCharTextEncoder.get_simple_alphabet()
 
         bad_probs = self.build_perfect_text_probs("bun^ny bun^ny", text_encoder)
         good_probs = self.build_perfect_text_probs("bugz^^ bun^ny", text_encoder)

@@ -13,7 +13,6 @@ def collate_fn(dataset_items: List[dict]):
     """
 
     result_batch = {}
-    # TODO: your code here
     tensor_keys = ('audio', 'spectrogram', 'text_encoded')
 
     for i in range(len(dataset_items)):

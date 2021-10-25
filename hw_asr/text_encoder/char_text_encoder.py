@@ -1,12 +1,7 @@
 import json
-import os
 from pathlib import Path
 from string import ascii_lowercase
 from typing import List, Union
-
-import gdown
-
-from hw_asr.utils import ROOT_PATH
 
 import numpy as np
 from torch import Tensor
