@@ -22,10 +22,7 @@ class TestTextEncoder(unittest.TestCase):
         assert "i love polina" == text_encoder.ctc_decode(encoded_polina.tolist())
 
     def test_beam_search(self):
-        text_encoder = CTCCharTextEncoder([
-            " ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-            "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        ])
+        text_encoder = CTCCharTextEncoder.get_simple_alphabet()
         np.random.seed(3407)
         a = np.random.random((5, 28))
         logits = np.array([a[i] / a.sum(1)[i] for i in range(len(a))])
@@ -50,3 +47,11 @@ class TestTextEncoder(unittest.TestCase):
         decoded_beams = text_encoder.ctc_beam_search(probs, beam_size=20)
         print(decoded_beams)
         self.assertIn(decoded_beams[0][0], "bunny bunny")
+
+    def test_russian(self):
+        text_encoder = CTCCharTextEncoder.get_russian_alphabet()
+        text = "я^^ ^л^ю^ббб^ллл^ю   г ^^^п^о^лллли^нууу оооо^нннн^а д^ала мммммммн^е т^^^^^^^^о^т т^е^с^тт"
+        true_text = "я люблю г полину она дала мне тот тест"
+        inds = [text_encoder.char2ind[c] for c in text]
+        decoded_text = text_encoder.ctc_decode(inds)
+        self.assertIn(decoded_text, true_text)

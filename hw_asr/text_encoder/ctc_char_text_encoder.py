@@ -7,6 +7,7 @@ import os, shutil, wget
 import re
 
 from hw_asr.utils import ROOT_PATH
+from torch import Tensor
 from hw_asr.text_encoder.char_text_encoder import CharTextEncoder
 
 
@@ -35,6 +36,15 @@ class CTCCharTextEncoder(CharTextEncoder):
             text = text.lower()
             text = re.sub(r"[^а-яё ]", "", text)
             return text
+
+    def encode(self, text) -> Tensor:
+        text = self.normalize_text(text)
+        try:
+            return Tensor([self.char2ind[char] for char in text]).unsqueeze(0)
+        except KeyError as e:
+            unknown_chars = set([char for char in text if char not in self.char2ind])
+            raise Exception(
+                f"Can't encode text '{text}'. Unknown chars: '{' '.join(unknown_chars)}'")
 
     def _ctc_decode(self, inds: List[int]) -> List[int]:
         res = []
