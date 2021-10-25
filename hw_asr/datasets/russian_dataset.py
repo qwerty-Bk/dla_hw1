@@ -37,11 +37,11 @@ class RussianDataset(BaseDataset):
         arch_path = self._data_dir / f"{part}.tar.gz"
         print(f"Loading part {part}")
         download_file(URL_LINKS[part], arch_path)
-        shutil.unpack_archive(arch_path, self._data_dir)
-        for fpath in (self._data_dir / "Russian").iterdir():
-            shutil.move(str(fpath), str(self._data_dir / fpath.name))
+        shutil.unpack_archive(arch_path, self._data_dir / part)
+        # for fpath in (self._data_dir / part).iterdir():
+        #     shutil.move(str(fpath), str(self._data_dir / part / fpath.name))
         os.remove(str(arch_path))
-        shutil.rmtree(str(self._data_dir / "Russian"))
+        # shutil.rmtree(str(self._data_dir / part))
 
     def _get_or_load_index(self, part):
         index_path = self._data_dir / f"{part}_index_ru.json"
@@ -63,21 +63,23 @@ class RussianDataset(BaseDataset):
         opus_paths = set()
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
             for opus_name in filenames:
-                if opus_name.endswith(".opus"):
-                    text_name = '.'.join(opus_name.split('.')[:-1] + ['txt'])
+                if "train" in part and opus_name.endswith(".opus") or \
+                        "test" in part and opus_name.endswith(".wav"):
+                    # print(dirpath, dirnames, filenames)
+                    text_name = Path(dirpath) / '.'.join(opus_name.split('.')[:-1] + ['txt'])
                     with Path(text_name).open() as f:
                         f_text = " ".join(f.readlines()).strip()
-                        t_info = torchaudio.info(str(opus_name))
+                        t_info = torchaudio.info(str(Path(dirpath) / opus_name))
                         length = t_info.num_frames / t_info.sample_rate
                         index.append(
                             {
-                                "path": str(Path(opus_name).absolute().resolve()),
+                                "path": str((Path(dirpath) / opus_name).absolute().resolve()),
                                 "text": f_text.lower(),
                                 "audio_len": length,
                             }
                         )
-                        print(index)
-                        1 / 0
+                        # print(index)
+                        # 1 / 0
         return index
 
 

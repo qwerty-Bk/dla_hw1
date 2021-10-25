@@ -22,7 +22,7 @@ def main(config, out_file):
     logger = config.get_logger("test")
 
     # text_encoder
-    language = config.get('lang', 'en')
+    language = config.config.get('lang', 'en')
     if language == 'en':
         text_encoder = CTCCharTextEncoder.get_simple_alphabet()
     elif language == 'ru':

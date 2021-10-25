@@ -29,7 +29,7 @@ def main(config):
     logger = config.get_logger("train")
 
     # text_encoder
-    language = config.get('lang', 'en')
+    language = config.config.get('lang', 'en')
     if language == 'en':
         text_encoder = CTCCharTextEncoder.get_simple_alphabet()
     elif language == 'ru':
