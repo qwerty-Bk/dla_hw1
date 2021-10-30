@@ -6,7 +6,7 @@
 
 ```shell
 git clone -b final https://github.com/qwerty-Bk/dla_hw1.git
-pip3 install -r ./requirements.txt
+pip3 install -r dla_hw1/requirements.txt
 ```
 
 2. Downloading the pretrained model
@@ -18,7 +18,7 @@ gdown.download('https://drive.google.com/uc?id=1oQwM4_QrxDIB4G2ZNWKVoB30vuVmdNhr
 
 3. Getting the results (in output.json file, the first lines are wer and cer of the novel before and after appyling the LM model, and the rest of the lines are the predictions)
 ```shell
-python3 dla_hw1/test.py -c your_test_config -o your_output_file_location -r cp.pth
+python3 dla_hw1/test.py -c dla_hw1/hw_asr/configs/test_config.json -o output.json -r cp.pth
 ```
 
 
